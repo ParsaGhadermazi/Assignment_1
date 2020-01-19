@@ -1,0 +1,11 @@
+files = dir('*.mat');
+for i=1:length(files)
+model(i)=load(files(i).name);
+end
+Diet=readtable('Book1.xlsx');
+diet(1).metID=Diet(:,1);
+diet(1).Ex_rxn_ID=Diet(:,2);
+diet(1).Uptake_rate=Diet(:,3);
+diet(2).metID=Diet(:,1);
+diet(2).Ex_rxn_ID=Diet(:,2);
+diet(2).Uptake_rate=Diet(:,4);
