@@ -1,6 +1,7 @@
 files = dir('*.mat');
+global CBTDIR
 for i=1:length(files)
-model(i)=load(files(i).name);
+model(i,1)=readCbModel([CBTDIR files(i).name]);
 end
 Diet=readtable('Book1.xlsx');
 diet(1).metID=Diet(:,1);
@@ -9,3 +10,12 @@ diet(1).Uptake_rate=Diet(:,3);
 diet(2).metID=Diet(:,1);
 diet(2).Ex_rxn_ID=Diet(:,2);
 diet(2).Uptake_rate=Diet(:,4);
+for k=1:length(files)
+    for i =1:2
+       for j=1:height(diet(i).metID)
+            model_1(k,i)=changeRxnBounds(model(k,1),diet(i).Ex_rxn_ID{j,1},diet(i).Uptake_rate{j,1},'b'); 
+       end
+    end
+end
+#----------------- Up to this point the script imports the whole COBRA models from AGORA, and applies the exchange reaction bounds based on the supplementary tabl
+#and stores the new models in model_1.
