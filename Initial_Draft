@@ -1,7 +1,9 @@
 files = dir('*.mat');
+global CBTDIR
 for i=1:length(files)
-model(i)=load(files(i).name);
+model(i,1)=readCbModel([CBTDIR files(i).name]);
 end
+model(:,2)=model(:,1);
 Diet=readtable('Book1.xlsx');
 diet(1).metID=Diet(:,1);
 diet(1).Ex_rxn_ID=Diet(:,2);
@@ -9,3 +11,11 @@ diet(1).Uptake_rate=Diet(:,3);
 diet(2).metID=Diet(:,1);
 diet(2).Ex_rxn_ID=Diet(:,2);
 diet(2).Uptake_rate=Diet(:,4);
+model_1=model;
+for k=1:length(files)
+    for i =1:2   
+       for j=1:height(diet(i).metID)        
+            model_1(k,i)=changeRxnBounds(model_1(k,i),diet(i).Ex_rxn_ID{j,1}{1},diet(i).Uptake_rate{j,1}{1},'l'); 
+       end  
+    end
+end
