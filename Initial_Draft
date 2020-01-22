@@ -15,7 +15,10 @@ model_1=model;
 for k=1:length(files)
     for i =1:2   
        for j=1:height(diet(i).metID)        
-            model_1(k,i)=changeRxnBounds(model_1(k,i),diet(i).Ex_rxn_ID{j,1}{1},diet(i).Uptake_rate{j,1}{1},'l'); 
+           if cell2mat(strfind(model_1(k,i).rxns(:,1),diet(i).Ex_rxn_ID{j,1}{1}))
+                model_1(k,i)=changeRxnBounds(model_1(k,i),diet(i).Ex_rxn_ID{j,1}{1},-diet(i).Uptake_rate{j,1},'l'); 
+           end
        end  
     end
 end
+
