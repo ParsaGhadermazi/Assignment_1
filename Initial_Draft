@@ -1,7 +1,6 @@
 files = dir('*.mat');
-global CBTDIR
 for i=1:length(files)
-model(i,1)=readCbModel([CBTDIR files(i).name]);
+model(i,1)=readCbModel([files(i).name]);
 end
 model(:,2)=model(:,1);
 Diet=readtable('Book1.xlsx');
@@ -21,4 +20,21 @@ for k=1:length(files)
        end  
     end
 end
+clear model
+changeCobraSolver('gurobi','all');
+for i=1:2
+    for j=1:length(model_1)
+        FBA_Soln(j,i)=optimizeCbModel(model_1(j,i),'max','one');
+    end
+end
+for i=1:2
+    for j=1:length(files)
+        EX_Flux(j,i).ID=model_1(j,i).rxns(findExcRxns(model_1(j,i)));
+        EX_Flux(j,i).flux=FBA_Soln(j,i).x(findExcRxns(model_1(j,i)));
+    end
+end
+%Up to this point, All the exchange fluxes are generated and saved in a
+%structure array Called Ex_Flux. The following steps sorts and does the
+%statistics needed. 
+
 
