@@ -27,6 +27,8 @@ for i=1:2
         FBA_Soln(j,i)=optimizeCbModel(model_1(j,i),'max','one');
     end
 end
+% The following loop generates an array of structs containing Exchange
+% reaction for all of the models and both diests
 for i=1:2
     for j=1:length(files)
         EX_Flux(j,i).ID=model_1(j,i).rxns(findExcRxns(model_1(j,i)));
@@ -36,5 +38,12 @@ end
 %Up to this point, All the exchange fluxes are generated and saved in a
 %structure array Called Ex_Flux. The following steps sorts and does the
 %statistics needed. 
-
-
+for i=1:2
+    for j=1:length(files)
+        [m,n]=sort(abs(EX_Flux(j,i).flux));
+         EX_Flux(j,i).flux=EX_Flux(j,i).flux(n);
+         EX_Flux(j,i).ID=EX_Flux(j,i).ID(n);
+    end
+end
+% EX_Flux is sorted based on the absolute value of fluxes of the exchange
+% reaction in each model and two diets
