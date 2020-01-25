@@ -1,7 +1,10 @@
+tic
 files = dir('*.mat');
 for i=1:length(files)
 model(i,1)=readCbModel([files(i).name]);
 end
+toc
+disp('Models Loaded Successfully')
 model(:,2)=model(:,1);
 Diet=readtable('Book1.xlsx');
 diet(1).metID=Diet(:,1);
@@ -11,6 +14,7 @@ diet(2).metID=Diet(:,1);
 diet(2).Ex_rxn_ID=Diet(:,2);
 diet(2).Uptake_rate=Diet(:,4);
 model_1=model;
+tic
 for k=1:length(files)
     for i =1:2   
        for j=1:height(diet(i).metID)        
@@ -20,15 +24,21 @@ for k=1:length(files)
        end  
     end
 end
+toc 
+disp('Uptake rates applied successfully')
 clear model
 changeCobraSolver('gurobi','all');
+tic
 for i=1:2
     for j=1:length(model_1)
         FBA_Soln(j,i)=optimizeCbModel(model_1(j,i),'max','one');
     end
 end
+toc
+disp('Optimization Solved for each model')
 % The following loop generates an array of structs containing Exchange
 % reaction for all of the models and both diests
+tic
 for i=1:2
     for j=1:length(files)
         EX_Flux(j,i).ID=model_1(j,i).rxns(findExcRxns(model_1(j,i)));
@@ -45,5 +55,14 @@ for i=1:2
          EX_Flux(j,i).ID=EX_Flux(j,i).ID(n);
     end
 end
+toc 
+disp('Exchange reactions are sorted and separated successfully')
 % EX_Flux is sorted based on the absolute value of fluxes of the exchange
 % reaction in each model and two diets
+Cutoff=7;
+for i=1:2  
+       for j=1:length(files) 
+           EX_Flux(j,i).ID=EX_Flux(j,i).ID(end-Cutoff:end);
+           EX_Flux(j,i).flux=EX_Flux(j,i).flux(end-Cutoff:end);
+       end
+end
